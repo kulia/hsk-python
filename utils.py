@@ -15,3 +15,13 @@ def get_words(test_num=1):
 	df = pd.read_csv(url, sep='\t', names=names)
 
 	return df
+
+
+def say(word):
+	'''
+	Use macOS built in voice to speak :code:`word`.
+
+	:param word: string
+	'''
+	from os import system
+	system('say -v Ting-Ting {}'.format(word))
