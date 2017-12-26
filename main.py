@@ -41,23 +41,42 @@ class TextBtnFrame(conf):
 		self.label_right_text.set(' ')
 		self.input.delete(0, 'end')
 
-class FlashCardsGUI(TextBtnFrame, conf):
-	def __init__(self, master, words):
+class FlashCardsGUI(TextBtnFrame, conf, Tk):
+	def __init__(self, master, words, rand_order=True):
 		self.master = master
 		self.master.title('Flash cards')
 
 		self.words = words
+		self.rand_order = rand_order
 
 		self.choose_word()
 		self.make_mainframe()
 
 	def choose_word(self):
-		self.word = self.words.sample(n=1)
 
-		self.w_hanzi = self.word.iat[0, 0]
-		self.w_pinyin = self.word.iat[0, 3]
-		self.w_pinyin_num = self.word.iat[0, 2]
-		self.w_english = self.word.iat[0, 4]
+		if self.rand_order:
+			self.word = self.words.sample(n=1)
+
+			inx = self.word.index[0]
+
+			self.w_hanzi = self.word.sim[inx]
+			self.w_pinyin = self.word.pyt[inx]
+			self.w_pinyin_num = self.word.pyn[inx]
+			self.w_english = self.word.en[inx]
+		elif not self.rand_order:
+			from utils import counter
+
+			inx = counter()
+			print(inx)
+
+			# if inx > len(self.words)-1:
+			# 	counter(reset=True)
+			# 	inx = counter()
+
+			self.w_hanzi = self.word.sim[inx]
+			self.w_pinyin = self.word.pyt[inx]
+			self.w_pinyin_num = self.word.pyn[inx]
+			self.w_english = self.word.en[inx]
 
 	def make_mainframe(self):
 		self.frame = Frame(self.master, padx=20, pady=20)
@@ -151,5 +170,11 @@ from utils import get_words
 words = get_words(test_num=1)
 
 root = Tk()
-my_gui = FlashCardsGUI(root, words)
+my_gui = FlashCardsGUI(root, words, rand_order=True)
+
+import tkinter.ttk as ttk
+s=ttk.Style()
+s.theme_use('alt')
+
+
 root.mainloop()

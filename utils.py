@@ -25,3 +25,18 @@ def say(word):
 	'''
 	from os import system
 	system('say -v Ting-Ting {}'.format(word))
+
+def counter(reset=False):
+	'''
+	Increment counter by one every time it is called.
+
+	:return: number of time function is called
+	'''
+	if reset:
+		counter.num = -1
+
+	try:
+		counter.num += 1
+	except AttributeError:
+		counter.num = 0
+	return counter.num
