@@ -1,21 +1,27 @@
 from tkinter import Tk, Frame, Label, Entry, Button, W, E, StringVar
 
-class TextBtnFrame:
-	def __init__(self, frame, label_text, func, format_dict, btn_text='check'):
-		self.font_body_hanzi = format_dict['font_body_hanzi']
-		self.entry_width = format_dict['entry_width']
-		self.font_body_latin = format_dict['font_body_latin']
+class conf:
+	font_header_hanzi   = ("Times", 60)
+	font_header_latin   = ("", 60)
+	font_body_hanzi     = ("Times", 24)
+	font_body_latin     = ("", 16)
+	entry_width         = 10
+	padx                = 4
+	pady                = 4
 
+
+class TextBtnFrame(conf):
+	def __init__(self, frame, label_text, func, btn_text='check'):
 		self.frame      = frame
 		self.label_text = label_text
 		self.func       = func
 		self.btn_text   = btn_text
 
-		self.label = Label(self.frame, text=self.label_text, font=self.font_body_hanzi)
-		self.input = Entry(self.frame, width=self.entry_width)
-		self.btn   = Button(self.frame, text=self.btn_text, font=self.font_body_latin, command=self.btn_click_action)
+		self.label = Label(self.frame, text=self.label_text, font=conf.font_body_hanzi)
+		self.input = Entry(self.frame, width=conf.entry_width)
+		self.btn   = Button(self.frame, text=self.btn_text, font=conf.font_body_latin, command=self.btn_click_action)
 		self.label_right_text = StringVar()
-		self.label_right = Label(self.frame, textvariable=self.label_right_text, font=self.font_body_latin)
+		self.label_right = Label(self.frame, textvariable=self.label_right_text, font=conf.font_body_latin)
 
 	def btn_click_action(self):
 		user_input = self.input.get()
@@ -32,21 +38,10 @@ class TextBtnFrame:
 		self.label_right.grid(row=row, column=3, sticky=W, padx=padx)
 
 
-class FlashCardsGUI(TextBtnFrame):
-	def __init__(self, master, format_dict, hsk_num=1):
+class FlashCardsGUI(TextBtnFrame, conf):
+	def __init__(self, master, hsk_num=1):
 		self.master = master
 		self.master.title('Flash cards')
-
-		self.format_dict = format_dict
-		self.font_header_hanzi = format_dict['font_header_hanzi']
-		self.font_header_latin = format_dict['font_header_latin']
-		self.font_body_hanzi = format_dict['font_body_hanzi']
-		self.font_body_latin = format_dict['font_body_latin']
-
-		self.padx = 4
-		self.pady = 4
-
-		self.entry_width = format_dict['entry_width']
 
 		self.hsk_num = hsk_num
 
@@ -75,13 +70,13 @@ class FlashCardsGUI(TextBtnFrame):
 
 		row = 0
 
-		hanzi_label = Label(self.frame, text=self.w_hanzi, font=self.font_header_hanzi)
-		hanzi_label.grid(row=row, column=0, sticky=W, padx=self.padx)
+		hanzi_label = Label(self.frame, text=self.w_hanzi, font=conf.font_header_hanzi)
+		hanzi_label.grid(row=row, column=0, sticky=W, padx=conf.padx)
 
 		row = 1
 		# First text button
-		pinyin_frame = TextBtnFrame(self.frame, 'Pinyin:', self.pinyin_btn_clk, self.format_dict,)
-		pinyin_frame.grid(row=row, padx=self.padx, pady=self.pady)
+		pinyin_frame = TextBtnFrame(self.frame, 'Pinyin:', self.pinyin_btn_clk)
+		pinyin_frame.grid(row=row, padx=conf.padx, pady=conf.pady)
 
 		self.frame.pack()
 
@@ -97,33 +92,10 @@ class FlashCardsGUI(TextBtnFrame):
 		return '{} %'.format(round(100 * score))
 
 	def reveal_pinyin(self):
-		self.pinyin_header = Label(self.frame, text=self.w_pinyin, font=self.font_header_latin)
-		self.pinyin_header.grid(row=0, column=2, sticky=W, padx=self.padx)
+		self.pinyin_header = Label(self.frame, text=self.w_pinyin, font=conf.font_header_latin)
+		self.pinyin_header.grid(row=0, column=2, sticky=W, padx=conf.padx)
 
-
-	def pinyin_btn_click(self):
-		row = 1
-		self.score_pinyin = '{} %'.format(20)
-		user_guess = self.in_pinyin.get()
-
-		score = '{} %'.format(pinyin_score(user_guess, self.w_hanzi))
-
-		self.pinyin_label_c3 = Label(self.frame, text=self.w_pinyin, font=self.font_header_latin)
-		self.pinyin_label_c3.grid(row=0, column=2, sticky=W, padx=self.padx)
-
-		self.pinyin_label_c4 = Label(self.frame, text=score, font=self.font_body_latin)
-		self.pinyin_label_c4.grid(row=row, column=3, sticky=W, padx=self.padx)
-
-		self.pinyin_btn.config(state="disabled")
-
-format_dict = {
-		'font_header_hanzi' : ("Times", 60),
-		'font_header_latin' : ("", 60),
-		'font_body_hanzi'   : ("Times", 24),
-		'font_body_latin'   : ("", 16),
-		'entry_width'       : 10,
-}
 
 root = Tk()
-my_gui = FlashCardsGUI(root, format_dict)
+my_gui = FlashCardsGUI(root)
 root.mainloop()
