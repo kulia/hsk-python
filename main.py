@@ -104,6 +104,10 @@ class FlashCardsGUI(TextBtnFrame, conf):
 		say_btn.grid(row=row, column=2)
 		nxt_btn.grid(row=row, column=3)
 
+		from sys import platform
+		if platform != 'darwin':
+			say_btn.config(state="disabled")
+
 		self.frame.pack()
 
 	def pinyin_btn_clk(self, user_input):
