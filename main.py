@@ -37,16 +37,16 @@ class TextBtnFrame(conf):
 		self.btn.grid(row=row, column=2)
 		self.label_right.grid(row=row, column=3, sticky=W, padx=padx)
 
+	def clear(self):
+		self.label_right_text.set(' ')
+		self.input.delete(0, 'end')
 
 class FlashCardsGUI(TextBtnFrame, conf):
-	def __init__(self, master, hsk_num=1):
+	def __init__(self, master, words):
 		self.master = master
 		self.master.title('Flash cards')
 
-		self.hsk_num = hsk_num
-
-		from utils import get_words
-		self.words = get_words(test_num=self.hsk_num)
+		self.words = words
 
 		self.word = self.words.sample(n=1)
 
@@ -64,19 +64,27 @@ class FlashCardsGUI(TextBtnFrame, conf):
 		self.frame.columnconfigure(1, minsize=100)
 		self.frame.columnconfigure(2, minsize=200)
 		self.frame.columnconfigure(3, minsize=100)
-		# self.frame.columnconfigure(4, minsize=100)
-
-		print(self.w_hanzi)
 
 		row = 0
 
-		hanzi_label = Label(self.frame, text=self.w_hanzi, font=conf.font_header_hanzi)
+		self.w_hanzi_sv = StringVar().set(self.w_hanzi)
+		hanzi_label = Label(self.frame, text=self.w_hanzi_sv, font=conf.font_header_hanzi)
 		hanzi_label.grid(row=row, column=0, sticky=W, padx=conf.padx)
+
+		self.w_pinyin_sv = StringVar().set(' ')
+		pinyin_header = Label(self.frame, textvariable=self.w_pinyin_sv, font=conf.font_header_latin)
+		pinyin_header.grid(row=0, column=2, sticky=W, padx=conf.padx)
 
 		row = 1
 		# First text button
-		pinyin_frame = TextBtnFrame(self.frame, 'Pinyin:', self.pinyin_btn_clk)
-		pinyin_frame.grid(row=row, padx=conf.padx, pady=conf.pady)
+		self.pinyin_frame = TextBtnFrame(self.frame, '拼音:', self.pinyin_btn_clk)
+		self.pinyin_frame.grid(row=row, padx=conf.padx, pady=conf.pady)
+
+		row = 2
+
+		self.en_frame = TextBtnFrame(self.frame, '英语:', self.en_btn_clk)
+		self.en_frame.grid(row=row, padx=conf.padx, pady=conf.pady)
+
 
 		self.frame.pack()
 
@@ -91,11 +99,23 @@ class FlashCardsGUI(TextBtnFrame, conf):
 
 		return '{} %'.format(round(100 * score))
 
-	def reveal_pinyin(self):
-		self.pinyin_header = Label(self.frame, text=self.w_pinyin, font=conf.font_header_latin)
-		self.pinyin_header.grid(row=0, column=2, sticky=W, padx=conf.padx)
+	def en_btn_clk(self, user_input):
+		if user_input.lower() in [x.lower() for x in self.w_english.split('; ')]:
+			return 'Correct'
 
+		return 'Incorrect'
+
+	def reveal_pinyin(self):
+		self.w_pinyin_sv.set(self.w_pinyin)
+
+	def clear(self):
+		self.w_pinyin_sv.set(' ')
+		self.pinyin_frame.clear()
+		self.en_frame.clear()
+
+from utils import get_words
+words = get_words(test_num=1)
 
 root = Tk()
-my_gui = FlashCardsGUI(root)
+my_gui = FlashCardsGUI(root, words)
 root.mainloop()
