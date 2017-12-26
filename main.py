@@ -48,14 +48,16 @@ class FlashCardsGUI(TextBtnFrame, conf):
 
 		self.words = words
 
+		self.choose_word()
+		self.make_mainframe()
+
+	def choose_word(self):
 		self.word = self.words.sample(n=1)
 
 		self.w_hanzi = self.word.iat[0, 0]
 		self.w_pinyin = self.word.iat[0, 3]
 		self.w_pinyin_num = self.word.iat[0, 2]
 		self.w_english = self.word.iat[0, 4]
-
-		self.make_mainframe()
 
 	def make_mainframe(self):
 		self.frame = Frame(self.master, padx=20, pady=20)
@@ -67,11 +69,13 @@ class FlashCardsGUI(TextBtnFrame, conf):
 
 		row = 0
 
-		self.w_hanzi_sv = StringVar().set(self.w_hanzi)
-		hanzi_label = Label(self.frame, text=self.w_hanzi_sv, font=conf.font_header_hanzi)
+		self.w_hanzi_sv = StringVar()
+		self.w_hanzi_sv.set(self.w_hanzi)
+		hanzi_label = Label(self.frame, textvariable=self.w_hanzi_sv, font=conf.font_header_hanzi)
 		hanzi_label.grid(row=row, column=0, sticky=W, padx=conf.padx)
 
-		self.w_pinyin_sv = StringVar().set(' ')
+		self.w_pinyin_sv = StringVar()
+		self.w_pinyin_sv.set(' ')
 		pinyin_header = Label(self.frame, textvariable=self.w_pinyin_sv, font=conf.font_header_latin)
 		pinyin_header.grid(row=0, column=2, sticky=W, padx=conf.padx)
 
@@ -85,6 +89,20 @@ class FlashCardsGUI(TextBtnFrame, conf):
 		self.en_frame = TextBtnFrame(self.frame, '英语:', self.en_btn_clk)
 		self.en_frame.grid(row=row, padx=conf.padx, pady=conf.pady)
 
+		row = 3
+
+		translation_label = Label(self.frame, text="Translation:", font=conf.font_body_latin)
+		self.translation = StringVar()
+		translation_label_2 = Label(self.frame, textvariable=self.translation, font=conf.font_body_latin)
+
+		say_btn = Button(self.frame, text="say", font=self.font_body_latin, command=self.say)
+		nxt_btn = Button(self.frame, text="next", font=self.font_body_latin, command=self.nxt_bnt_click)
+
+		translation_label.grid(row=row, sticky=W, padx=self.padx)
+		translation_label_2.grid(row=row, column=1, sticky=W, padx=self.padx)
+
+		say_btn.grid(row=row, column=2)
+		nxt_btn.grid(row=row, column=3)
 
 		self.frame.pack()
 
@@ -100,6 +118,7 @@ class FlashCardsGUI(TextBtnFrame, conf):
 		return '{} %'.format(round(100 * score))
 
 	def en_btn_clk(self, user_input):
+		self.translation.set(self.w_english)
 		if user_input.lower() in [x.lower() for x in self.w_english.split('; ')]:
 			return 'Correct'
 
@@ -108,10 +127,21 @@ class FlashCardsGUI(TextBtnFrame, conf):
 	def reveal_pinyin(self):
 		self.w_pinyin_sv.set(self.w_pinyin)
 
+	def say(self):
+		from utils import say
+		say(self.w_hanzi)
+
 	def clear(self):
 		self.w_pinyin_sv.set(' ')
+		self.translation.set(' ')
 		self.pinyin_frame.clear()
 		self.en_frame.clear()
+
+	def nxt_bnt_click(self):
+		self.choose_word()
+		self.w_hanzi_sv.set(self.w_hanzi)
+		self.clear()
+
 
 from utils import get_words
 words = get_words(test_num=1)
