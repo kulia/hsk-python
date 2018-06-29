@@ -9,6 +9,12 @@ This flashcard application is meant for exercising to the test.
 
 ## Syntax and example
 
+To start, write
+
+    $ python3 main.py hsk_level
+  
+in your terminal, where `hsk_level` is an integer between 1 and 6. A window will appear, as shown below.
+
 ![](img/s1.png)
 
 First, the program displays the 汉字, while you have to input the Pinyin. The program uses numbers for writing tones, as shown in
